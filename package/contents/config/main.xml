@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0 http://www.kde.org/standards/kcfg/1.0/kcfg.xsd">
+  <kcfgfile name=""/>
+
+  <group name="General">
+    <entry name="playerMode" type="String"><default>spotify</default></entry>
+    <entry name="offsetMs" type="Int"><default>0</default></entry>
+    <entry name="showWhenPaused" type="Bool"><default>true</default></entry>
+    <entry name="showTrackInfo" type="Bool"><default>true</default></entry>
+    <entry name="userPresets" type="String"><default></default></entry>
+  </group>
+
+  <!-- Style and Animation keys are what a preset stores; keep in sync with code/style.js -->
+  <group name="Style">
+    <entry name="fontFamily" type="String"><default></default></entry>
+    <entry name="fontSize" type="Int"><default>30</default></entry>
+    <entry name="bold" type="Bool"><default>true</default></entry>
+    <entry name="italic" type="Bool"><default>false</default></entry>
+    <entry name="uppercase" type="Bool"><default>false</default></entry>
+    <entry name="letterSpacing" type="Int"><default>0</default></entry>
+    <entry name="textColor" type="String"><default>#ffffff</default></entry>
+    <entry name="colorMode" type="Int"><default>0</default></entry>
+    <entry name="textColor2" type="String"><default>#ff7ab8</default></entry>
+    <entry name="inactiveColor" type="String"><default>#ffffff</default></entry>
+    <entry name="outline" type="Bool"><default>false</default></entry>
+    <entry name="outlineColor" type="String"><default>#000000</default></entry>
+    <entry name="shadowMode" type="Int"><default>2</default></entry>
+    <entry name="shadowColor" type="String"><default>#000000</default></entry>
+    <entry name="shadowStrength" type="Int"><default>60</default></entry>
+    <entry name="backdrop" type="Bool"><default>false</default></entry>
+    <entry name="backdropColor" type="String"><default>#000000</default></entry>
+    <entry name="backdropOpacity" type="Int"><default>50</default></entry>
+    <entry name="backdropRadius" type="Int"><default>12</default></entry>
+  </group>
+
+  <group name="Animation">
+    <entry name="transition" type="Int"><default>1</default></entry>
+    <entry name="transitionMs" type="Int"><default>300</default></entry>
+    <entry name="karaoke" type="Bool"><default>false</default></entry>
+    <entry name="karaokeColor" type="String"><default>#ffd54a</default></entry>
+    <entry name="wave" type="Bool"><default>false</default></entry>
+    <entry name="waveAmplitude" type="Int"><default>4</default></entry>
+    <entry name="waveSpeed" type="Int"><default>50</default></entry>
+    <entry name="rainbowSpeed" type="Int"><default>30</default></entry>
+  </group>
+
+  <group name="Layout">
+    <entry name="linesBefore" type="Int"><default>1</default></entry>
+    <entry name="linesAfter" type="Int"><default>1</default></entry>
+    <entry name="alignment" type="Int"><default>1</default></entry>
+    <entry name="lineSpacing" type="Int"><default>6</default></entry>
+    <entry name="inactiveScale" type="Int"><default>70</default></entry>
+    <entry name="inactiveOpacity" type="Int"><default>45</default></entry>
+    <entry name="wrap" type="Bool"><default>true</default></entry>
+    <entry name="panelWidth" type="Int"><default>400</default></entry>
+  </group>
+
+  <group name="Overlay">
+    <entry name="overlayEnabled" type="Bool"><default>false</default></entry>
+    <entry name="overlayAnchor" type="Int"><default>7</default></entry>
+    <entry name="overlayMarginX" type="Int"><default>40</default></entry>
+    <entry name="overlayMarginY" type="Int"><default>80</default></entry>
+    <entry name="overlayWidth" type="Int"><default>900</default></entry>
+    <entry name="overlayOpacity" type="Int"><default>100</default></entry>
+  </group>
+</kcfg>

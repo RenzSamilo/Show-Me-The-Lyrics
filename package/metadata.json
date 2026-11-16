@@ -1,0 +1,13 @@
+{
+    "KPackageStructure": "Plasma/Applet",
+    "KPlugin": {
+        "Category": "Multimedia",
+        "Description": "Synced lyrics for the song playing on Spotify, as a widget or an on-screen overlay",
+        "Icon": "view-media-lyrics",
+        "Id": "io.github.renzsamilo.smtl",
+        "Name": "Show Me The Lyrics",
+        "Version": "0.1.0",
+        "Website": "https://github.com/RenzSamilo/SMTL"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0"
+}
