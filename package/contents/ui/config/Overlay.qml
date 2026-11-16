@@ -11,6 +11,8 @@ KCM.SimpleKCM {
     property int cfg_overlayMarginY
     property int cfg_overlayWidth
     property int cfg_overlayOpacity
+    property bool cfg_overlayRandom
+    property int cfg_overlayRandomArea
 
     Kirigami.FormLayout {
         QQC2.CheckBox {
@@ -25,10 +27,32 @@ KCM.SimpleKCM {
             opacity: 0.7
         }
 
+        QQC2.CheckBox {
+            Kirigami.FormData.label: i18n("Random position:")
+            text: i18n("Jump to a new spot on every line")
+            enabled: cfg_overlayEnabled
+            checked: cfg_overlayRandom
+            onToggled: cfg_overlayRandom = checked
+        }
+        PercentSlider {
+            Kirigami.FormData.label: i18n("Use the top:")
+            enabled: cfg_overlayEnabled && cfg_overlayRandom
+            from: 20
+            suffix: i18n("% of the screen")
+            value: cfg_overlayRandomArea
+            onMoved: v => cfg_overlayRandomArea = v
+        }
+        QQC2.Label {
+            visible: cfg_overlayRandom
+            text: i18n("Shows only the current line. Pop or Fade (Animation page) suits it best.")
+            font: Kirigami.Theme.smallFont
+            opacity: 0.7
+        }
+
         // 3x3 picker: which part of the screen the overlay sticks to
         Grid {
             Kirigami.FormData.label: i18n("Screen position:")
-            enabled: cfg_overlayEnabled
+            enabled: cfg_overlayEnabled && !cfg_overlayRandom
             columns: 3
             spacing: 2
             Repeater {
@@ -52,14 +76,14 @@ KCM.SimpleKCM {
 
         QQC2.SpinBox {
             Kirigami.FormData.label: i18n("Distance from side (px):")
-            enabled: cfg_overlayEnabled && cfg_overlayAnchor % 3 !== 1
+            enabled: cfg_overlayEnabled && !cfg_overlayRandom && cfg_overlayAnchor % 3 !== 1
             from: 0; to: 4000; stepSize: 10
             value: cfg_overlayMarginX
             onValueModified: cfg_overlayMarginX = value
         }
         QQC2.SpinBox {
             Kirigami.FormData.label: i18n("Distance from top/bottom (px):")
-            enabled: cfg_overlayEnabled && Math.floor(cfg_overlayAnchor / 3) !== 1
+            enabled: cfg_overlayEnabled && !cfg_overlayRandom && Math.floor(cfg_overlayAnchor / 3) !== 1
             from: 0; to: 4000; stepSize: 10
             value: cfg_overlayMarginY
             onValueModified: cfg_overlayMarginY = value

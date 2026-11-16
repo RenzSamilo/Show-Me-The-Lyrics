@@ -64,5 +64,7 @@
     <entry name="overlayMarginY" type="Int"><default>80</default></entry>
     <entry name="overlayWidth" type="Int"><default>900</default></entry>
     <entry name="overlayOpacity" type="Int"><default>100</default></entry>
+    <entry name="overlayRandom" type="Bool"><default>false</default></entry>
+    <entry name="overlayRandomArea" type="Int"><default>67</default></entry>
   </group>
 </kcfg>
