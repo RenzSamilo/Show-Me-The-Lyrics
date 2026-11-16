@@ -22,15 +22,18 @@ KCM.SimpleKCM {
     function apply(preset) {
         var style = Style.resolve(preset.style);
         Object.keys(style).forEach(function (k) { Plasmoid.configuration[k] = style[k]; });
+        Plasmoid.configuration.writeConfig();  // keep it even if the dialog is cancelled
         appliedName = preset.name;
     }
     function saveCurrent(name) {
         var list = userPresets.filter(function (p) { return p.name !== name; });
         list.push({ name: name, style: Style.capture(Plasmoid.configuration) });
         Plasmoid.configuration.userPresets = JSON.stringify(list);
+        Plasmoid.configuration.writeConfig();
     }
     function remove(name) {
         Plasmoid.configuration.userPresets = JSON.stringify(userPresets.filter(function (p) { return p.name !== name; }));
+        Plasmoid.configuration.writeConfig();
     }
 
     // one shared clock and sweep for every preview card

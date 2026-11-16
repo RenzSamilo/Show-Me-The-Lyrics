@@ -12,6 +12,7 @@ Item {
     property real progress: 0   // 0..1 through this line, for the karaoke fill
     property real fxTime: 0     // seconds, drives wave and rainbow
     property real activeSize: cfg.fontSize
+    property bool rendered: true  // false skips drawing (and the shadow pass) but keeps the height
 
     readonly property string shown: (cfg.uppercase ? text.toUpperCase() : text) || "♪"
     // Hebrew, Arabic, Indic, Thai: must be shaped as a whole, so no per-letter effects.
@@ -37,6 +38,7 @@ Item {
     Item {
         id: holder
         anchors.fill: parent
+        visible: line.rendered
 
         NumberAnimation { id: fadeIn; target: holder; property: "opacity"; from: 0; to: 1; duration: line.cfg.transitionMs }
         NumberAnimation { id: pop; target: holder; property: "scale"; from: 0.7; to: 1; duration: line.cfg.transitionMs; easing.type: Easing.OutBack }

@@ -58,6 +58,7 @@ Window {
         animate: win.visible
         cfg: win.cfg
         compact: win.random   // current line only: neighbours would jump around with it
+        scrollAnimated: !win.random
         lines: win.engine.lines
         currentIndex: win.engine.currentIndex
         progress: win.engine.progress
