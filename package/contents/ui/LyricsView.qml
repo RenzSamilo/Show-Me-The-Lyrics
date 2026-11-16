@@ -23,7 +23,8 @@ Item {
     readonly property int before: compact ? 0 : cfg.linesBefore
     readonly property int after: compact ? 0 : cfg.linesAfter
     readonly property real activeSize: sizeOverride > 0 ? sizeOverride : cfg.fontSize
-    readonly property real pad: compact ? 0 : Math.round(activeSize * 0.4)
+    // room for glow, shadow and wave around the text; a panel has no height to spare
+    readonly property real pad: sizeOverride > 0 ? 0 : Math.round(activeSize * 0.4)
     readonly property real fxTime: clock.elapsedTime
 
     FontMetrics { id: activeFm; font: Style.font(view.cfg, view.activeSize) }
@@ -32,11 +33,19 @@ Item {
 
     // the current line's item; re-read when the index or the set of lines changes
     readonly property Item currentItem: (rows.count, currentIndex >= 0 ? rows.itemAt(currentIndex) : null)
-    // a wrapped current line is taller than one row; grow with it so the lines after stay visible
-    readonly property real activeH: Math.max(activeFm.height, currentItem ? currentItem.height : 0)
-    readonly property real slotY: pad + before * inactiveStep
+    // first and last lines actually shown around it
+    readonly property Item firstItem: (rows.count, currentIndex >= 0 ? rows.itemAt(Math.max(0, currentIndex - before)) : null)
+    readonly property Item lastItem: (rows.count, currentIndex >= 0 ? rows.itemAt(Math.min(rows.count - 1, currentIndex + after)) : null)
 
-    implicitHeight: (before + after) * inactiveStep + activeH + 2 * pad
+    // Space is measured from the real lines, so a line that wraps onto several rows (or uses
+    // a taller fallback font) is never cut off. Each side keeps at least its usual room, so
+    // the current line doesn't jump at the start and end of a song.
+    readonly property real activeH: Math.max(activeFm.height, currentItem ? currentItem.height : 0)
+    readonly property real topSpace: Math.max(before * inactiveStep, currentItem && firstItem ? currentItem.y - firstItem.y : 0)
+    readonly property real bottomSpace: Math.max(after * inactiveStep, currentItem && lastItem ? lastItem.y + lastItem.height - currentItem.y - currentItem.height : 0)
+    readonly property real slotY: pad + topSpace
+
+    implicitHeight: topSpace + activeH + bottomSpace + 2 * pad
     clip: true
 
     FrameAnimation {

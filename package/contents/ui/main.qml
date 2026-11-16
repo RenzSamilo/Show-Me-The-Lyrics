@@ -4,6 +4,7 @@ import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.private.mpris as Mpris
 import "../code/lyrics.js" as Lyrics
+import "../code/style.js" as Style
 
 PlasmoidItem {
     id: root
@@ -11,6 +12,39 @@ PlasmoidItem {
     readonly property var cfg: Plasmoid.configuration
     readonly property bool horizontalPanel: Plasmoid.formFactor === PlasmaCore.Types.Horizontal
     readonly property bool inPanel: horizontalPanel || Plasmoid.formFactor === PlasmaCore.Types.Vertical
+
+    Fonts {}
+
+    // ---- style ----
+    // Normally the config itself. With shuffle on: a snapshot of the config overlaid with a
+    // preset picked at random for each line.
+    property var styleCfg: cfg
+    property var shufflePreset: null
+
+    function restyle(reroll) {
+        var pool = cfg.shuffleEnabled ? Style.shufflePool(cfg) : [];
+        if (pool.length === 0) {
+            shufflePreset = null;
+            styleCfg = cfg;
+            return;
+        }
+        var last = shufflePreset ? shufflePreset.name : "";
+        var keep = pool.filter(function (p) { return p.name === last; })[0];
+        if (reroll || !keep) {
+            // don't repeat the previous line's preset when there is a choice
+            var choices = pool.length > 1 ? pool.filter(function (p) { return p.name !== last; }) : pool;
+            keep = choices[Math.floor(Math.random() * choices.length)];
+        }
+        shufflePreset = keep;
+        var snapshot = {};
+        cfg.keys().forEach(function (k) { snapshot[k] = cfg[k]; });
+        styleCfg = Object.assign(snapshot, Style.resolve(keep.style));
+    }
+    onCurrentIndexChanged: restyle(true)
+    Connections {
+        target: root.cfg
+        function onValueChanged() { root.restyle(false); }   // any setting changed: rebuild the snapshot
+    }
 
     // ---- player ----
     property var player: null
@@ -127,6 +161,8 @@ PlasmoidItem {
     readonly property string fallbackText: lines.length === 0 && cfg.showTrackInfo && track
         ? "♪ " + track + (artist ? " — " + artist : "") : ""
     readonly property bool shouldShow: track !== "" && (playing || cfg.showWhenPaused) && (lines.length > 0 || fallbackText !== "")
+    // with the overlay up, the widget's own copy would just be a duplicate
+    readonly property bool widgetShows: shouldShow && !(cfg.overlayEnabled && cfg.overlayHidesWidget)
 
     // ---- overlay: loaded by URL so a missing layer-shell module can't break the widget ----
     Loader { id: overlay }
@@ -138,6 +174,7 @@ PlasmoidItem {
     }
 
     Component.onCompleted: {
+        restyle(true);
         pickPlayer();
         syncOverlay();
     }
@@ -161,13 +198,13 @@ PlasmoidItem {
         Layout.preferredHeight: root.horizontalPanel ? -1 : implicitHeight
         Layout.minimumHeight: root.inPanel ? 0 : 40
 
-        cfg: root.cfg
+        cfg: root.styleCfg
         compact: root.inPanel
         // fit the panel thickness; a vertical panel has no fixed height to fit, so use a small fixed size
         sizeOverride: root.horizontalPanel ? Math.min(root.cfg.fontSize, root.height * 0.6)
             : root.inPanel ? Math.min(root.cfg.fontSize, 14) : 0
-        opacity: root.shouldShow ? 1 : 0
-        animate: root.shouldShow
+        opacity: root.widgetShows ? 1 : 0
+        animate: root.widgetShows
         lines: root.lines
         currentIndex: root.currentIndex
         progress: root.progress

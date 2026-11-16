@@ -31,11 +31,15 @@ plasmawindowed "$PWD/package"
 ## Settings
 
 - **General**: Spotify only or any player, sync offset, what to show when paused or when a song has no synced lyrics.
-- **Presets**: live previews; click one to apply it, or save your current style as your own.
+- **Presets**: live previews; click one to apply it, or save your current style as your own. Includes a Minecraft set, and Shuffle, which picks a random preset from the ones you tick for every line.
 - **Style**: font, colours (solid, gradient, rainbow), outline, glow or drop shadow, backdrop.
 - **Animation**: line transition, karaoke fill, wave, rainbow speed.
 - **Layout**: lines before/after, alignment, spacing, size and opacity of the other lines.
 - **Overlay**: on-screen HUD position, margins, width, opacity.
+
+## Bundled font
+
+The Minecraft presets use [Monocraft](https://github.com/IdreesInc/Monocraft) (SIL Open Font License 1.1), shipped in `package/contents/fonts/` with its licence. It is a look-alike; Mojang's own font is not included.
 
 ## Tests
 
@@ -43,9 +47,14 @@ plasmawindowed "$PWD/package"
 node tests/lyrics.test.js
 ```
 
+```bash
+node tests/text.test.js
+```
+
 ## Layout of the code
 
 - `package/contents/code/lyrics.js`: LRC parsing and the LRCLIB lookup.
+- `package/contents/code/text.js`: letter splitting and wrapping for the letter-by-letter effects.
 - `package/contents/code/style.js`: built-in presets and style helpers.
 - `package/contents/ui/main.qml`: player tracking, position, lyric state.
 - `package/contents/ui/LyricsView.qml`, `LyricLine.qml`, `FxText.qml`: rendering.

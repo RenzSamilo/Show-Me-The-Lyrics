@@ -12,7 +12,8 @@ Window {
     id: win
 
     required property var engine
-    readonly property var cfg: engine.cfg
+    readonly property var cfg: engine.cfg            // overlay settings
+    readonly property var style: engine.styleCfg   // text style; a shuffled preset when shuffle is on
     readonly property bool random: cfg.overlayRandom
     // overlayAnchor is a 3x3 grid index: 0 top-left ... 8 bottom-right
     readonly property int row: random ? 0 : Math.floor(cfg.overlayAnchor / 3)
@@ -42,11 +43,11 @@ Window {
     // Shrink the box to the current line, otherwise a short line centred in a wide box barely moves.
     readonly property string currentText: {
         var t = lineIndex >= 0 && lineIndex < engine.lines.length ? engine.lines[lineIndex].text : engine.fallbackText;
-        return cfg.uppercase ? t.toUpperCase() : t;
+        return style.uppercase ? t.toUpperCase() : t;
     }
-    TextMetrics { id: measure; font: Style.font(win.cfg, win.cfg.fontSize); text: win.currentText }
+    TextMetrics { id: measure; font: Style.font(win.style, win.style.fontSize); text: win.currentText }
     // + two font sizes of slack for glow, outline and per-letter spacing
-    readonly property real randomWidth: Math.min(cfg.overlayWidth, win.width, measure.width + cfg.fontSize * 2)
+    readonly property real randomWidth: Math.min(cfg.overlayWidth, win.width, measure.width + style.fontSize * 2)
 
     LyricsView {
         id: view
@@ -56,7 +57,7 @@ Window {
         height: implicitHeight
         opacity: win.cfg.overlayOpacity / 100
         animate: win.visible
-        cfg: win.cfg
+        cfg: win.style
         compact: win.random   // current line only: neighbours would jump around with it
         scrollAnimated: !win.random
         lines: win.engine.lines

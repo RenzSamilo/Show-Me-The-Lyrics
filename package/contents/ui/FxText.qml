@@ -1,8 +1,9 @@
 import QtQuick
 import "../code/style.js" as Style
+import "../code/text.js" as TextUtil
 
 // One line drawn letter by letter, so each letter can have its own colour and offset
-// (gradient, rainbow, karaoke fill, wave). Wraps at word boundaries itself.
+// (gradient, rainbow, karaoke fill, wave). Wraps itself; see code/text.js.
 // shortcut: letters are placed individually, so kerning/ligatures are lost and complex
 // scripts would break; LyricLine falls back to a plain Text for those.
 Item {
@@ -18,27 +19,20 @@ Item {
     implicitHeight: glyphs.height
 
     FontMetrics { id: fm; font: fx.font }
+    // The same text as one unwrapped line. When letters come from a fallback font (Korean,
+    // Japanese... in a Latin-only font) they are taller than this font's own metrics; the
+    // probe gives the real row height and baseline, so rows don't overlap or get cut off.
+    Text { id: probe; visible: false; font: fx.font; text: fx.text }
+    readonly property real rowHeight: Math.max(fm.height, probe.implicitHeight)
 
     function layout(text, maxW, font) {
-        var out = [], rowWidths = [], x = 0, row = 0, word = [], wordW = 0;
-        function flush() {
-            if (fx.cfg.wrap && x > 0 && x + wordW > maxW) { rowWidths.push(x); x = 0; row++; }
-            word.forEach(function (g) { out.push({ c: g.c, x: x, row: row }); x += g.w; });
-            word = []; wordW = 0;
-        }
-        Array.from(text).forEach(function (c) {
-            var w = fm.advanceWidth(c);
-            word.push({ c: c, w: w }); wordW += w;
-            if (c === " ") flush();
-        });
-        flush();
-        rowWidths.push(x);
-        var lineH = fm.height;
-        out.forEach(function (g) {
-            g.x += (maxW - rowWidths[g.row]) * fx.cfg.alignment / 2;
+        var rows = TextUtil.layoutRows(text, maxW, fx.cfg.wrap, function (c) { return fm.advanceWidth(c); });
+        var lineH = fx.rowHeight;
+        rows.glyphs.forEach(function (g) {
+            g.x += (maxW - rows.rowWidths[g.row]) * fx.cfg.alignment / 2;
             g.y = g.row * lineH;
         });
-        return { list: out, height: (row + 1) * lineH };
+        return { list: rows.glyphs, height: rows.rowWidths.length * lineH };
     }
 
     function colorAt(i, n) {
@@ -55,7 +49,10 @@ Item {
             required property var modelData
             required property int index
             x: modelData.x
-            y: modelData.y + (fx.cfg.wave ? Math.sin(fx.fxTime * fx.cfg.waveSpeed / 100 * 8 + index * 0.55) * fx.cfg.waveAmplitude : 0)
+            // line every letter up on the row's baseline: letters from different fonts
+            // have different heights
+            y: modelData.y + (probe.baselineOffset - baselineOffset)
+                + (fx.cfg.wave ? Math.sin(fx.fxTime * fx.cfg.waveSpeed / 100 * 8 + index * 0.55) * fx.cfg.waveAmplitude : 0)
             text: modelData.c
             font: fx.font
             color: fx.colorAt(index, rep.count)

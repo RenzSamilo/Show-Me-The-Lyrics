@@ -13,6 +13,7 @@ KCM.SimpleKCM {
     property int cfg_overlayOpacity
     property bool cfg_overlayRandom
     property int cfg_overlayRandomArea
+    property bool cfg_overlayHidesWidget
 
     Kirigami.FormLayout {
         QQC2.CheckBox {
@@ -25,6 +26,13 @@ KCM.SimpleKCM {
             text: i18n("Click-through, like an in-game HUD. Styled the same as the widget.")
             font: Kirigami.Theme.smallFont
             opacity: 0.7
+        }
+
+        QQC2.CheckBox {
+            text: i18n("Hide the widget's own lyrics while the overlay is on")
+            enabled: cfg_overlayEnabled
+            checked: cfg_overlayHidesWidget
+            onToggled: cfg_overlayHidesWidget = checked
         }
 
         QQC2.CheckBox {

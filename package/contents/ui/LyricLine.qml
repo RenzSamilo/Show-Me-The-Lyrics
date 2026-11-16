@@ -14,7 +14,8 @@ Item {
     property real activeSize: cfg.fontSize
     property bool rendered: true  // false skips drawing (and the shadow pass) but keeps the height
 
-    readonly property string shown: (cfg.uppercase ? text.toUpperCase() : text) || "♪"
+    // NFC: decomposed text (e.g. Hangul sent as separate jamo) becomes whole letters
+    readonly property string shown: (cfg.uppercase ? text.toUpperCase() : text).normalize("NFC") || "♪"
     // Hebrew, Arabic, Indic, Thai: must be shaped as a whole, so no per-letter effects.
     readonly property bool complexScript: /[\u0590-\u0EFF\uFB1D-\uFDFF\uFE70-\uFEFF]/.test(shown)
     readonly property bool perLetter: active && !complexScript && (cfg.colorMode !== 0 || cfg.karaoke || cfg.wave)
@@ -52,7 +53,9 @@ Item {
 
             Text {
                 id: plain
-                visible: !line.perLetter
+                // opacity, not visible: this subtree is the hidden source of the effect below, and
+                // Qt doesn't pick up visibility changes made inside an invisible parent
+                opacity: line.perLetter ? 0 : 1
                 width: parent.width
                 text: line.shown
                 font: line.textFont
@@ -66,7 +69,7 @@ Item {
 
             FxText {
                 id: letters
-                visible: line.perLetter
+                opacity: line.perLetter ? 1 : 0
                 width: parent.width
                 cfg: line.cfg
                 text: line.perLetter ? line.shown : ""
@@ -82,11 +85,13 @@ Item {
             visible: line.cfg.shadowMode !== 0
             shadowEnabled: true
             shadowColor: line.cfg.shadowColor
-            shadowBlur: line.cfg.shadowStrength / 100
+            shadowBlur: line.cfg.shadowMode === 3 ? 0 : line.cfg.shadowStrength / 100
             shadowOpacity: 1
             blurMax: 40
-            // glow sits right behind the text; a drop shadow is offset down-right
-            shadowHorizontalOffset: line.cfg.shadowMode === 2 ? line.px * 0.05 : 0
+            // glow sits right behind the text; a drop shadow is offset down-right;
+            // a pixel shadow is a hard copy one "pixel" away, like Minecraft text
+            shadowHorizontalOffset: line.cfg.shadowMode === 2 ? line.px * 0.05
+                : line.cfg.shadowMode === 3 ? Math.max(1, Math.round(line.px * 0.1)) : 0
             shadowVerticalOffset: shadowHorizontalOffset
         }
     }

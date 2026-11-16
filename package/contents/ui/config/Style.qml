@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import org.kde.kcmutils as KCM
 import org.kde.kquickcontrols as KQC
+import ".." as Ui
 
 KCM.SimpleKCM {
     property string cfg_fontFamily
@@ -26,13 +27,17 @@ KCM.SimpleKCM {
     property int cfg_backdropOpacity
     property int cfg_backdropRadius
 
+    Ui.Fonts { id: bundled }
+
     Kirigami.FormLayout {
         Kirigami.Separator { Kirigami.FormData.isSection: true; Kirigami.FormData.label: i18n("Font") }
 
         QQC2.ComboBox {
             Kirigami.FormData.label: i18n("Family:")
             Layout.preferredWidth: 260
-            model: [i18n("System default")].concat(Qt.fontFamilies())
+            // bundled fonts first, then everything installed
+            model: [i18n("System default")].concat(bundled.families,
+                Qt.fontFamilies().filter(f => bundled.families.indexOf(f) < 0))
             Component.onCompleted: currentIndex = cfg_fontFamily ? Math.max(0, find(cfg_fontFamily)) : 0
             onActivated: cfg_fontFamily = currentIndex === 0 ? "" : currentText
         }
@@ -85,7 +90,7 @@ KCM.SimpleKCM {
         RowLayout {
             Kirigami.FormData.label: i18n("Shadow:")
             QQC2.ComboBox {
-                model: [i18n("None"), i18n("Glow"), i18n("Drop shadow")]
+                model: [i18n("None"), i18n("Glow"), i18n("Drop shadow"), i18n("Pixel shadow")]
                 currentIndex: cfg_shadowMode
                 onActivated: cfg_shadowMode = currentIndex
             }
@@ -93,7 +98,7 @@ KCM.SimpleKCM {
         }
         PercentSlider {
             Kirigami.FormData.label: i18n("Shadow strength:")
-            enabled: cfg_shadowMode !== 0
+            enabled: cfg_shadowMode === 1 || cfg_shadowMode === 2
             value: cfg_shadowStrength
             onMoved: v => cfg_shadowStrength = v
         }

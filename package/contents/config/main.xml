@@ -10,6 +10,8 @@
     <entry name="showWhenPaused" type="Bool"><default>true</default></entry>
     <entry name="showTrackInfo" type="Bool"><default>true</default></entry>
     <entry name="userPresets" type="String"><default></default></entry>
+    <entry name="shuffleEnabled" type="Bool"><default>false</default></entry>
+    <entry name="shufflePool" type="String"><default></default></entry>
   </group>
 
   <!-- Style and Animation keys are what a preset stores; keep in sync with code/style.js -->
@@ -66,5 +68,6 @@
     <entry name="overlayOpacity" type="Int"><default>100</default></entry>
     <entry name="overlayRandom" type="Bool"><default>false</default></entry>
     <entry name="overlayRandomArea" type="Int"><default>67</default></entry>
+    <entry name="overlayHidesWidget" type="Bool"><default>true</default></entry>
   </group>
 </kcfg>
