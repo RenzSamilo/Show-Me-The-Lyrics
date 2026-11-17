@@ -15,6 +15,7 @@
 
 <p align="center">
   <a href="#features">Features</a> ·
+  <a href="#presets">Presets</a> ·
   <a href="#install">Install</a> ·
   <a href="#usage">Usage</a> ·
   <a href="#settings">Settings</a> ·
@@ -47,6 +48,18 @@ so there is no Spotify login and no API key.
 <p align="center">
   <img src="docs/media/random-overlay.gif" alt="Overlay with random position and shuffled presets" width="720">
   <br><sub>Random position with shuffle. Demo lyrics are placeholders, rendered by the widget itself.</sub>
+</p>
+
+## Presets
+
+<p align="center">
+  <img src="docs/media/presets.png" alt="All 21 built-in presets" width="800">
+</p>
+
+Pick one on the **Presets** page, tick several to shuffle between them, or save your own.
+
+<p align="center">
+  <img src="docs/media/settings-presets.png" alt="The Presets settings page with shuffle turned on" width="560">
 </p>
 
 ## Requirements
